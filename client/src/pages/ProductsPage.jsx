@@ -1,0 +1,218 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import api from '../lib/api';
+import { useToast } from '../components/Toast';
+import { flyToCart } from '../lib/anim';
+import { Search, ShoppingCart, Eye, Star, SlidersHorizontal } from 'lucide-react';
+
+export default function ProductsPage() {
+  const [state, setState] = useState({ items: [], loading: true, error: '' });
+  const [filters, setFilters] = useState({ search: '', category: '', sort: 'newest' });
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadProducts() {
+      try {
+        const params = new URLSearchParams({ limit: '12', ...filters });
+        const response = await api.get(`/products?${params.toString()}`);
+        if (active) {
+          setState({ items: response.data.data.items, loading: false, error: '' });
+        }
+      } catch (error) {
+        if (active) {
+          setState({ items: [], loading: false, error: error.message });
+        }
+      }
+    }
+
+    loadProducts();
+
+    return () => {
+      active = false;
+    };
+  }, [filters]);
+
+  function handleFilterChange(event) {
+    const { name, value } = event.target;
+    setFilters((current) => ({ ...current, [name]: value }));
+    setState((current) => ({ ...current, loading: true, error: current.error }));
+  }
+
+  return (
+    <section>
+      {/* ── Page header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+        <div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter">
+            Product{' '}
+            <span className="text-stroke inline-block rotate-1">Listing</span>
+          </h2>
+        </div>
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-accent border-4 border-ink shadow-neo-sm -rotate-2">
+          <Star className="w-4 h-4 fill-ink" strokeWidth={0} />
+          <span className="font-black text-xs uppercase tracking-widest">Hot deals</span>
+        </div>
+      </div>
+
+      {/* ── Filters ── */}
+      <div className="neo-card !bg-canvas mb-8">
+        <div className="flex items-center gap-2 mb-4">
+          <SlidersHorizontal className="w-5 h-5" strokeWidth={3} />
+          <span className="font-black text-sm uppercase tracking-wider">Filters</span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <label className="grid gap-1.5">
+            <span className="font-bold text-xs uppercase tracking-wider">Search</span>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40 pointer-events-none" strokeWidth={3} />
+              <input
+                name="search"
+                value={filters.search}
+                onChange={handleFilterChange}
+                placeholder="Keyboards, monitors…"
+                className="neo-input !pl-10"
+              />
+            </div>
+          </label>
+          <label className="grid gap-1.5">
+            <span className="font-bold text-xs uppercase tracking-wider">Category</span>
+            <select
+              name="category"
+              value={filters.category}
+              onChange={handleFilterChange}
+              className="neo-input cursor-pointer"
+            >
+              <option value="">All Categories</option>
+              <option value="Laptops">Laptops</option>
+              <option value="Keyboards">Keyboards</option>
+              <option value="Displays">Displays</option>
+              <option value="Audio">Audio</option>
+              <option value="Accessories">Accessories</option>
+              <option value="Storage">Storage</option>
+            </select>
+          </label>
+          <label className="grid gap-1.5">
+            <span className="font-bold text-xs uppercase tracking-wider">Sort</span>
+            <select name="sort" value={filters.sort} onChange={handleFilterChange} className="neo-input cursor-pointer">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="price_asc">Price low → high</option>
+              <option value="price_desc">Price high → low</option>
+              <option value="name_asc">Name A-Z</option>
+              <option value="name_desc">Name Z-A</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      {/* ── Loading skeletons ── */}
+      {state.loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <article key={i} className="neo-card">
+              <div className="animate-shimmer h-40 border-4 border-ink mb-4" />
+              <div className="animate-shimmer h-4 w-3/5 mb-2" />
+              <div className="animate-shimmer h-3 w-4/5 mb-4" />
+              <div className="flex justify-between items-center">
+                <div className="animate-shimmer h-7 w-20" />
+                <div className="animate-shimmer h-10 w-24" />
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : null}
+
+      {/* ── Error ── */}
+      {state.error ? (
+        <div className="neo-card !bg-accent text-center py-8">
+          <p className="font-bold text-lg">{state.error}</p>
+        </div>
+      ) : null}
+
+      {/* ── Empty ── */}
+      {!state.loading && !state.error && state.items.length === 0 ? (
+        <div className="neo-card text-center py-12">
+          <ShoppingCart className="w-16 h-16 mx-auto mb-4 opacity-30" strokeWidth={2} />
+          <p className="font-bold text-xl uppercase">No products available yet.</p>
+        </div>
+      ) : null}
+
+      {/* ── Product grid ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {state.items.map((product, idx) => (
+          <article
+            key={product._id}
+            className="neo-card neo-card-hover animate-fade-in-up flex flex-col"
+            style={{ animationDelay: `${idx * 60}ms` }}
+          >
+            {/* Image */}
+            <div className="border-4 border-ink mb-4 overflow-hidden bg-canvas">
+              {product.images && product.images[0] ? (
+                (() => {
+                  const img = product.images[0];
+                  const variants = img.variants || {};
+                  const sizes = Object.keys(variants).sort((a, b) => Number(a) - Number(b));
+                  const webpSrcSet = sizes.map((w) => `${variants[w].webp} ${w}w`).join(', ');
+                  const jpgSrcSet = sizes.map((w) => `${variants[w].jpg} ${w}w`).join(', ');
+                  const fallback = img.url;
+                  return (
+                    <picture>
+                      {webpSrcSet ? <source type="image/webp" srcSet={webpSrcSet} /> : null}
+                      <img
+                        className="w-full h-44 object-cover"
+                        src={fallback}
+                        srcSet={jpgSrcSet}
+                        alt={product.name}
+                        loading="lazy"
+                      />
+                    </picture>
+                  );
+                })()
+              ) : (
+                <img className="w-full h-44 object-cover" src="/images/placeholder.png" alt={product.name} loading="lazy" />
+              )}
+            </div>
+
+            {/* Category badge */}
+            <div className="neo-badge bg-muted mb-2 self-start">{product.category}</div>
+
+            {/* Title */}
+            <h3 className="text-xl font-black uppercase leading-tight mb-1">{product.name}</h3>
+            <p className="text-sm font-medium mb-4 flex-1 line-clamp-2">{product.description}</p>
+
+            {/* Meta */}
+            <div className="flex items-center justify-between gap-3 pt-3 border-t-4 border-ink">
+              <span className="text-2xl font-black">₹{product.price}</span>
+              <div className="flex gap-2">
+                <Link to={`/products/${product.slug}`} className="neo-btn neo-btn-secondary text-xs !py-2">
+                  <Eye className="w-4 h-4" strokeWidth={3} />
+                  View
+                </Link>
+                <button
+                  type="button"
+                  className="neo-btn neo-btn-primary text-xs !py-2"
+                  onClick={async (e) => {
+                    const img = e.currentTarget.closest('article').querySelector('img');
+                    flyToCart(img, '#cart-link');
+                    try {
+                      await api.post(`/cart/items/${product._id}`, { quantity: 1 });
+                      const evt = new CustomEvent('devgear:toast', { detail: { message: `${product.name} added to cart`, type: 'success' } });
+                      window.dispatchEvent(evt);
+                    } catch (err) {
+                      const evt = new CustomEvent('devgear:toast', { detail: { message: `Failed to add ${product.name}`, type: 'error' } });
+                      window.dispatchEvent(evt);
+                    }
+                  }}
+                >
+                  <ShoppingCart className="w-4 h-4" strokeWidth={3} />
+                  Add
+                </button>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}

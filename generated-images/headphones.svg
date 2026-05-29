@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f6efe4"/>
+      <stop offset="100%" stop-color="#ede0cf"/>
+    </linearGradient>
+    <linearGradient id="cup" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#333"/>
+      <stop offset="100%" stop-color="#111"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <ellipse cx="600" cy="660" rx="340" ry="54" fill="#d9c6aa" opacity="0.55"/>
+  <g transform="translate(300 135)">
+    <path d="M180 260 C180 140, 300 70, 420 70 C540 70, 660 140, 660 260" fill="none" stroke="#111111" stroke-width="28" stroke-linecap="round"/>
+    <path d="M180 260 C180 140, 300 70, 420 70 C540 70, 660 140, 660 260" fill="none" stroke="#3a3a3a" stroke-width="12" stroke-linecap="round" opacity="0.75"/>
+    <rect x="120" y="250" width="76" height="220" rx="38" fill="url(#cup)" stroke="#111111" stroke-width="10"/>
+    <rect x="644" y="250" width="76" height="220" rx="38" fill="url(#cup)" stroke="#111111" stroke-width="10"/>
+    <rect x="93" y="308" width="130" height="118" rx="48" fill="#222" opacity="0.85"/>
+    <rect x="617" y="308" width="130" height="118" rx="48" fill="#222" opacity="0.85"/>
+    <circle cx="158" cy="368" r="44" fill="#f4ede2" opacity="0.22"/>
+    <circle cx="682" cy="368" r="44" fill="#f4ede2" opacity="0.22"/>
+    <path d="M250 135 L290 110" stroke="#111" stroke-width="16" stroke-linecap="round"/>
+    <path d="M590 135 L550 110" stroke="#111" stroke-width="16" stroke-linecap="round"/>
+    <circle cx="420" cy="418" r="54" fill="#1f1f1f" stroke="#111111" stroke-width="8"/>
+    <circle cx="420" cy="418" r="22" fill="#f4ede2" opacity="0.88"/>
+  </g>
+  <text x="600" y="725" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#111111">Pulse Noise-Cancel Headphones</text>
+</svg>

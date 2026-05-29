@@ -1,0 +1,27 @@
+{
+  "name": "devgear-store-server",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "build": "echo \"Server build step is not required yet\"",
+    "seed": "node src/scripts/seedDevData.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.1",
+    "helmet": "^8.0.0",
+    "multer": "^1.4.5-lts.2",
+    "sharp": "^0.32.1",
+    "jsonwebtoken": "^9.0.2",
+    "express-rate-limit": "^7.4.1",
+    "mongoose": "^8.7.1",
+    "morgan": "^1.10.0"
+  }
+}
