@@ -33,6 +33,10 @@
     min-height: 100%;
   }
 
+  html {
+    font-size: 125%; /* Scales the entire UI perfectly */
+  }
+
   body {
     margin: 0;
     font-family: var(--font-family-sans);
