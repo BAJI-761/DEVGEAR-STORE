@@ -244,7 +244,20 @@ export default function HomePage() {
           <p className="text-lg font-bold text-surface/80 mb-8 max-w-lg mx-auto">
             Subscribe for exclusive drops, restock alerts, and developer gear insights. No spam, just hardware.
           </p>
-          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+          <form 
+            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" 
+            onSubmit={(e) => {
+              e.preventDefault();
+              const input = e.currentTarget.querySelector('input');
+              if (input.value) {
+                const evt = new CustomEvent('devgear:toast', { 
+                  detail: { message: `Successfully subscribed with ${input.value}!`, type: 'success' } 
+                });
+                window.dispatchEvent(evt);
+                input.value = '';
+              }
+            }}
+          >
             <input 
               type="email" 
               placeholder="YOUR@EMAIL.COM" 
