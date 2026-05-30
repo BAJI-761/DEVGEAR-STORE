@@ -8,6 +8,6 @@ export async function connectDatabase() {
     return;
   }
 
-  await mongoose.connect(uri);
+  await mongoose.connect(uri, { dbName: 'devgear-store' });
   console.log('MongoDB connected');
 }
